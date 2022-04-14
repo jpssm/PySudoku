@@ -3,14 +3,14 @@
 class Vertex:
     def __init__(self, name) -> None:
         self.name =  name
-        self.adjacentlist = []
+        self.adjacentList = []
         self.color = None
     
     def addNeighbor(self,vertex) -> None: #Adiciona um vértice a lista de vizinhos
-        self.adjacentlist.append(vertex)
+        self.adjacentList.append(vertex)
     
     def getNeighborhood(self) -> list: #Retorna a lista com a vizinhança de vértices adjacentes
-        return(self.adjacentlist)
+        return(self.adjacentList)
 
     def paint(self,color) -> None: #"Pinta" o vértice com a "cor" dada
         self.color = color
