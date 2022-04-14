@@ -1,4 +1,4 @@
-#Classe que implementa a estrutura de um grafo no qual os vértices podem ser coloridos
+#Classes que simulam a estrutura de um grafo no qual os vértices podem ser coloridos
 
 class Vertex:
     def __init__(self, name):
