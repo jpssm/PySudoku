@@ -1,29 +1,29 @@
 #Classes que simulam a estrutura de um grafo no qual os vértices podem ser coloridos
 
 class Vertex:
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name =  name
-        self.adjacentList = []
+        self.adjacentlist = []
         self.color = None
     
-    def addNeighbor(self,vertex): #Adiciona um vértice a lista de vizinhos
-        self.adjacentList.append(vertex)
+    def addNeighbor(self,vertex) -> None: #Adiciona um vértice a lista de vizinhos
+        self.adjacentlist.append(vertex)
     
-    def getNeighborhood(self): #Retorna a lista com a vizinhança de vértices adjacentes
-        return(self.adjacentList)
+    def getNeighborhood(self) -> list: #Retorna a lista com a vizinhança de vértices adjacentes
+        return(self.adjacentlist)
 
-    def paint(self,color): #"Pinta" o vértice com a "cor" dada
+    def paint(self,color) -> None: #"Pinta" o vértice com a "cor" dada
         self.color = color
     
 
 class Graph:
-    def __init__(self):
-        self.vertexList = {} #A lista de vértices é implementado através de um dicionário
+    def __init__(self) -> None:
+        self.vertexlist = {} #A lista de vértices é implementado através de um dicionário
     
-    def addVextex(self,name): #Adiciona ao grafo um vértice com o nome dado
-        self.vertexList[name] = Vertex(name)
+    def addVextex(self,name) -> None: #Adiciona ao grafo um vértice com o nome dado
+        self.vertexlist[name] = Vertex(name)
     
-    def addEdge(self,nameVertex1,nameVertex2): #Adiciona uma aresta entre os vértices
-        self.vertexList[nameVertex1].addNeighbor(self.vertexList[nameVertex2]) #Adiciona o vértice 1 a lista de vizinhos do 2
-        self.vertexList[nameVertex2].addNeighbor(self.vertexList[nameVertex1]) #Adiciona o vértice 2 a lista de vizinhos do 1
+    def addEdge(self,nameVertex1,nameVertex2) -> None: #Adiciona uma aresta entre os vértices
+        self.vertexlist[nameVertex1].addNeighbor(self.vertexlist[nameVertex2]) #Adiciona o vértice 1 a lista de vizinhos do 2
+        self.vertexlist[nameVertex2].addNeighbor(self.vertexlist[nameVertex1]) #Adiciona o vértice 2 a lista de vizinhos do 1
     
