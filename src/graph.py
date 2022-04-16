@@ -15,6 +15,9 @@ class Vertex:
     def paint(self,color) -> None: #"Pinta" o vértice com a "cor" dada
         self.color = color
     
+    def getColor(self) -> int: #Retorna a "cor" do vértice
+        return(self.color)
+    
 
 class Graph:
     def __init__(self) -> None:
