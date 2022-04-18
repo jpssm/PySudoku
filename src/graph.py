@@ -4,7 +4,7 @@ class Vertex:
     def __init__(self, name) -> None:
         self.name =  name
         self.adjacentList = []
-        self.color = None
+        self.label = None #Rotulo do vértice
     
     def addNeighbor(self,vertex) -> None: #Adiciona um vértice a lista de vizinhos
         self.adjacentList.append(vertex)
@@ -12,11 +12,11 @@ class Vertex:
     def getNeighborhood(self) -> list: #Retorna a lista com a vizinhança de vértices adjacentes
         return(self.adjacentList)
 
-    def paint(self,color) -> None: #"Pinta" o vértice com a "cor" dada
-        self.color = color
+    def setLabel(self,label) -> None: #Define o rótulo do vértice
+        self.label = label
     
-    def getColor(self) -> int: #Retorna a "cor" do vértice
-        return(self.color)
+    def getLabel(self) -> int: #Retorna o rótulo do vértice
+        return(self.label)
     
 
 class Graph:
