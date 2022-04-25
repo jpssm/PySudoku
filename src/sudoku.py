@@ -10,10 +10,21 @@ class Cell(Vertex):
         super().__init__(name)
         self.candidatesLabels = [1,2,3,4,5,6,7,8,9] #Lista de possíveis valores para prencher a célula
     
-    def choiche(self,label): #Escolhe um rótulo para 
+    def choiche(self,label) -> None: #Escolhe um rótulo para 
         self.setLabel(label)
+
+    def __lt__(self, cell) -> bool: #Usado para ordenar a lista de vértices com base no número de candidatos disponível
+        if self.label == None and cell.getLabel() == None: #Se ambos não estão rotulados o menor é o que tem mesmo candidatos
+            if len(self.candidatesLabels) < len(cell.getCandidates()):
+                return(True)
+            else: 
+                return(False)
+        elif cell.getLabel() == None: #Se um estiver rotulado, o menor é o que não possui rótulo
+            return(False)
+        else:
+            return(True)
     
-    def analyzeChoice(self, label, neighborCell): #Função usada para verificar se o uso de um rótulo por uma célula vizinha gera algum conflito.
+    '''def analyzeChoice(self, label, neighborCell): #Função usada para verificar se o uso de um rótulo por uma célula vizinha gera algum conflito.
         if self.getLabel() != None: #Se a célula já está rotulada, o uso do rótulo pela célula vizinha não gera conflito
             #print("EITA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             return(True)
@@ -37,7 +48,7 @@ class Cell(Vertex):
             return(True) #Se passar por todas a verificações, então não há conflito
         else:
             #print("EITA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            return(True) #Se o label não é um dos candidatos do vértice, não existe conflito
+            return(True) #Se o label não é um dos candidatos do vértice, não existe conflito'''
 
     
     def addCandidate(self, label) -> None:
@@ -55,15 +66,31 @@ class Sudoku(Graph): #Se comporta como um grafo
         super().__init__()
         self.newGame() #Cria outro jogo
 
-    def setRandomLabel(self, nColumn, nLine) -> None: #Rotula aleatóriamente uma célula especificada
-        cell = self.vertexlist[(nColumn, nLine)]
+    def setRandomLabel(self,cell): #nColumn, nLine) -> None: #Rotula aleatóriamente uma célula especificada
+        #cell = self.vertexlist[(nColumn, nLine)]
         label = random.choice(cell.getCandidates())
         cell.removeCandidate(label) #Remove o rótulo escolhido da lista de candidatos da célula
-        '''for neighbor in cell.getNeighborhood(): #Analisa todos as células vizinhas
-            if not(neighbor.analyzeChoice(label,cell)): #Se a análise de escolha sinalizar algum conflito
-                #print("EITA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                label = random.choice(cell.getCandidates()) #Escolhe um novo rótulo
-                cell.removeCandidate(label) '''
+        for neighborCell1 in cell.getNeighborhood():
+            if neighborCell1.getCandidates() == [label] and neighborCell1.getLabel() == None : #Se o rótulo escolhido for o único candidato de algum vizinho em branco
+                label = random.choice(cell.getCandidates())  #Escolhe um novo rótulo
+                cell.removeCandidate(label) 
+            elif label in neighborCell1.getCandidates():
+                candidatos = neighborCell1.getCandidates()
+                clique1 = [neighborCell1]
+                clique2 = [neighborCell1]
+                for neighborCell2 in cell.adjacentList:
+                    if (neighborCell2.getLabel() == None and neighborCell2 != neighborCell1 ):
+                        if (candidatos == neighborCell2.getCandidates() and neighborCell2.isNeighbor(clique1[-1])):
+                            clique1.append(neighborCell2)
+                        if (candidatos == neighborCell2.getCandidates() and neighborCell2.isNeighbor(clique2[-1])):
+                            clique2.append(neighborCell2)
+                numRemainingLabels = len(neighborCell1.getCandidates())
+                if (numRemainingLabels < len(clique1) or numRemainingLabels < len(clique2)):
+                    print(f"Grupo 1: Células restantes: {len(clique1)} Rótulos Restantes: {numRemainingLabels} Vértice: {neighborCell1.name} ")
+                    print(f"Grupo 2: Células restantes: {len(clique2)} Rótulos Restantes: {numRemainingLabels} Vértice: {neighborCell1.name} ")
+                    if ( len(cell.getCandidates() > 0)): #Se houver mais candidatos
+                        label = random.choice(cell.getCandidates())  #Escolhe um novo rótulo
+                        cell.removeCandidate(label)
         cell.setLabel(label)
         for neighbor in cell.getNeighborhood():
             if label in neighbor.getCandidates():
@@ -92,41 +119,27 @@ class Sudoku(Graph): #Se comporta como um grafo
             for nLine in range(lineIndex+1, 9):
                 self.addEdge(cell,(columnIndex,nLine))
 
-    def newGame(self) -> None:
+    def newGame(self) -> None: #Gera um novo jogo de sudoku
         self.assemble() #Recria o tabô
         #Rotula aleatóriamente a células conjunto central 3x3
-        '''for nLine in range(0,9): 
-            for nColumn in range(0,9):
-                #print(f" coluna: {nColumn}\n linha: {nLine}\n\n")
-                self.setRandomLabel(nColumn, nLine)
-                for cell in self.vertexlist[(nColumn, nLine)].getNeighborhood():
-                    cell.choiche(1)
-                    #self.setRandomLabel(cell.name[0], cell.name[1])
-                print("\n#####################\n")
+        nRemaningCells = 81 #Numero de células restantes a serem rotuladas
+        cells = list(self.vertexlist.values()) #Salva as células que estão no dicionário em uma lista
+        while (nRemaningCells > 0):
+            cells.sort() #Ordena a lista de células
+            cell = cells[0]
+            try:
+                self.setRandomLabel(cell) #Rotula a célula em branco com menos candidatos
+            except:
+                #nRemaningCells = 81
+                cell.setLabel("@")
                 print(self)
-                self.assemble()'''
-        for lineBlock in range(3):
-            for columnBlock in range(3):
-                for nLine in range(3): #Para cada uma das 81 células do tablô cria-se um vértice
-                    for nColumn in range(3):
-                        print("\n#####################\n")
-                        print(self)
-                        print(f"coluna:{nColumn + 3*columnBlock} , linha: {nLine + 3*lineBlock}\n")
-                        try:
-                            self.setRandomLabel(nColumn + 3*columnBlock, nLine + 3*lineBlock)
-                        except:
-                            0/0
-        '''for nLine in range(0,9): 
-            for nColumn in range(0,9):
-                self.assemble()
-                cell = self.vertexlist[(nColumn,nLine)]
-                cell.setLabel(1)
-                for neighbor in cell.getNeighborhood():
-                    neighbor.setLabel(1)
-                print("\n#####################\n")
-                print(f"linha:{nLine} , coluna: {nColumn}\n")
-                print(self)'''
-        #Prenche os vértices a
+                print("EITAAAAAAAAAAAAAAAAAAAAAAAAA")
+                break
+            nRemaningCells -=1 #Decrementa o contador de células restantes
+        print(self)
+        print("\n#####################\n")
+        print(f"linha:{cell.name[1]} , coluna: {cell.name[0]}\n")
+            #input()
 
     
 
@@ -156,4 +169,5 @@ class Sudoku(Graph): #Se comporta como um grafo
         return(outStr)
 
 a = Sudoku()
+print(a.vertexlist[(2,1)].isNeighbor(a.vertexlist[(2,1)]))
 a.newGame()

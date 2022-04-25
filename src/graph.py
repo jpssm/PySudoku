@@ -7,7 +7,7 @@ class Vertex:
         self.label = None #Rotulo do vértice
     
     def addNeighbor(self,vertex) -> None: #Adiciona um vértice a lista de vizinhos
-        if not(vertex in self.adjacentList): #Adiciona o vértice somente se ele já não estiver na lista
+        if not(vertex in self.adjacentList or vertex == self): #Adiciona o vértice somente se ele já não estiver na lista e nã forme um laço
             self.adjacentList.append(vertex)
 
     def getNeighborhood(self) -> list: #Retorna a lista com a vizinhança de vértices adjacentes
@@ -18,6 +18,12 @@ class Vertex:
     
     def getLabel(self) -> int: #Retorna o rótulo do vértice
         return(self.label)
+    
+    def isNeighbor(self,vertex): #Verfica se um vértice é um vizinho
+        if vertex in self.adjacentList:
+            return(True)
+        else:
+            return(False)
     
     
     
